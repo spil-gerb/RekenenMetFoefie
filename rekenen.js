@@ -406,7 +406,7 @@ StrategieAftrekkenTotOnderDe10 = {
 StrategieTafels = {
 
 	geefOefening : function() {
-		return 'de tafel van '+this.som2;
+		return 'alle tafels door elkaar';
 	},
 	
 	zetTafel : function(tafelVan) {
@@ -445,7 +445,7 @@ StrategieTafels = {
 StrategieTafelsWillekeurigeVolgorde = {
 
 	geefOefening : function() {
-		return 'alle tafels door elkaar';
+		return 'de tafel van '+this.som2;
 	},
 	
 	zetTafel : function(tafelVan) {
