@@ -1,0 +1,49 @@
+<html>
+<head>
+	<title>Rekenen</title>
+	<script language="javascript" src="rekenen.js"></script>
+	<link rel="stylesheet" type="text/css" href="rekenen.css">
+</head>
+<body onload='Rekenen.main();'>
+<form>
+<div id="init" class="console">
+	<h1>Rekenen met Foefie</h1>
+	<img id="foefieImg" src="" hspace=8 align="left">
+	<p>Hallo Jaelle!</p>
+	<p>Wat ga je oefenen :</p>
+	<select id="soort" onchange="Rekenen.wijzigSoort();">
+		<option selected value="Kies">- Kies een oefening -</option>
+		<option value="AftrekkenTotOnderDe10">Aftrek-sommen</option>
+		<option value="Tafels">Een tafel oefenen</option>
+		<option value="WillekeurigeTafel">Alle tafels oefenen</option>
+		<option value="UitkomstMax10">vul de gaten: optellen/aftrekken - 1 t/m 10</option>
+		<option value="UitkomstPrecies10">vul de gaten: maak er 10 van</option>
+		<option value="StrategieOptellenEnAftrekkenTotEnMet100">Sommen tot en met 110</option>
+	</select>
+	<p id="tafelvanp">De tafel van : <input type="text" id="tafelVan" class="invulveld" size=4 value="8"></p>
+	<p>Hoeveel sommen ga je maken : <input type="text" id="aantalsommen" class="invulveld" size=4 value="10"></p>
+	<input type="button" value="Starten!" class="buttonGood" onclick='Rekenen.start();'>
+</div>
+<div id="message">
+</div>
+<div id="sommen" class="console">
+	<div id="nummer">
+	</div>
+	<div id="som1">
+		<input type="text" size=2 id="som1veld" onkeyup="Rekenen.checkVeldInput(event);" \>
+	</div>
+	<div id="operator"></div>
+	<div id="som2">
+		<input type="text" size=2 id="som2veld" onkeyup="Rekenen.checkVeldInput(event);" \>
+	</div>
+	<div id="is">=</div>
+	<div id="uitkomst">
+		<input type="text" size=2 id="som3veld" onkeyup="Rekenen.checkVeldInput(event);" \>
+	</div>
+	<input type="button" value="Klaar" class="buttonGood" onclick='Rekenen.testAntwoord();'>
+	
+</div>
+</form>
+
+</body>
+</html>

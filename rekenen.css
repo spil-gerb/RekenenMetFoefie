@@ -1,0 +1,91 @@
+body, p, div {
+	font-size: 24px;
+	font-family: Helvetica;
+}
+
+.console {
+	font-size: 24px;
+    border-radius: 10px;
+    background-color: #E2E2E2;
+    padding: 2%;
+    width: 60%;
+    left: 20%;
+    top: 10%;
+    position:relative;
+}
+
+input, select {
+	border: 0px;
+	font-size: 24px;
+	background-color: transparent;
+}
+
+#nummer {
+	padding-top:6px;
+	float:left;
+	font-size: 18px;
+	color: #000000;
+	padding-right: 16px;
+}
+#som1 {
+	float:left;
+}
+#operator {
+	float:left;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+#som2 {
+	float:left;
+}
+#is {
+	float:left;
+	padding-left: 12px;	
+	padding-right: 12px;	
+}
+#uitkomst {
+}
+
+img {
+	border-radius:8px;
+}
+
+#sommen {
+    margin-top: 12px;
+	min-height: 160px;
+}
+
+#message {
+    width: 60%;
+    left: 20%;
+    top: 5%;
+    padding: 2%;
+    position:relative;
+    border-radius: 10px;
+}
+
+.buttonGood {
+	background-color: #EEFFEE;
+	border-radius:8px;
+	border: 2px solid black;
+	width: 200px;
+	left: 30%;
+	margin-top: 30px;
+	position:relative;
+}
+
+.messageGood {
+	background-color: #EEFFEE;
+}
+
+.messageBad {
+	background-color: #FFEEEE;
+}
+
+.messageNeutral {
+	background-color: #EEEEFF;
+}
+
+.invulveld {
+	border: 1px solid #808080;
+}
