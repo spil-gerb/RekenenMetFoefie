@@ -13,6 +13,8 @@
 	<p>Wat ga je oefenen :</p>
 	<select id="soort" onchange="Rekenen.wijzigSoort();">
 		<option selected value="Kies">- Kies een oefening -</option>
+		<option value="KlokkijkenNaarDigitaal">Klokkijken (van wijzerplaat naar digitaal)</option>
+		<option value="KlokkijkenNaarAnaloog">Klokkijken (van digitaal naar wijzerplaat)</option>
 		<option value="AftrekkenTotOnderDe10">Aftrek-sommen</option>
 		<option value="Tafels">Een tafel oefenen</option>
 		<option value="WillekeurigeTafel">Alle tafels oefenen</option>
@@ -27,18 +29,22 @@
 <div id="message">
 </div>
 <div id="sommen" class="console">
-	<div id="nummer">
+	<div id="numericalInput">
+		<div id="nummer">
+		</div>
+		<div id="som1">
+			<input type="text" size=2 id="som1veld" onkeyup="Rekenen.checkVeldInput(event);" \>
+		</div>
+		<div id="operator"></div>
+		<div id="som2">
+			<input type="text" size=2 id="som2veld" onkeyup="Rekenen.checkVeldInput(event);" \>
+		</div>
+		<div id="is">=</div>
 	</div>
-	<div id="som1">
-		<input type="text" size=2 id="som1veld" onkeyup="Rekenen.checkVeldInput(event);" \>
+	<div id="variableInput">
 	</div>
-	<div id="operator"></div>
-	<div id="som2">
-		<input type="text" size=2 id="som2veld" onkeyup="Rekenen.checkVeldInput(event);" \>
-	</div>
-	<div id="is">=</div>
 	<div id="uitkomst">
-		<input type="text" size=2 id="som3veld" onkeyup="Rekenen.checkVeldInput(event);" \>
+		<input type="text" size=3 id="som3veld" onkeyup="Rekenen.checkVeldInput(event);" \>
 	</div>
 	<input type="button" value="Klaar" class="buttonGood" onclick='Rekenen.testAntwoord();'>
 	

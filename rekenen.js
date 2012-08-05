@@ -128,6 +128,11 @@ Rekenen = {
 			case 'StrategieOptellenEnAftrekkenTotEnMet100':
 				this.strategie = StrategieOptellenEnAftrekkenTotEnMet100;
 				break;	
+			case 'KlokkijkenNaarDigitaal':
+				this.strategie = StrategieKlokkijkenNaarDigitaal;
+				document.getElementById('numericalInput').style.display = 'none';
+				this.strategie.init(document.getElementById('variableInput'), document.getElementById('uitkomstId'));
+				break;	
 			case 'Kies':
 				this.displayText("Je moet nog een oefening kiezen.", 'messageNeutral');
 				return;
@@ -144,68 +149,99 @@ Rekenen = {
 		this.strategie.nieuweSom();
 		this.huidigeSom++;
 		this.somWasFout = false;
-		this.teVerbergenVeld = this.strategie.geefTeVerbergenVeld();
 		document.getElementById('nummer').innerHTML = "Som "+this.huidigeSom+".";
-		document.getElementById('som1veld').disabled = true;
-		document.getElementById('som2veld').disabled = true;
-		document.getElementById('som3veld').disabled = true;
-		document.getElementById('som'+this.teVerbergenVeld+'veld').disabled = false;
-		document.getElementById('som'+this.teVerbergenVeld+'veld').focus();
-		if (this.teVerbergenVeld != 1) {
-			document.getElementById('som1veld').value = this.strategie.geefSom1();
-		} else {
-			document.getElementById('som1veld').value = '';
+		switch(this.strategie.geefInputType()) {
+			case 'numerical':
+					this.teVerbergenVeld = this.strategie.geefTeVerbergenVeld();
+					document.getElementById('som1veld').disabled = true;
+					document.getElementById('som2veld').disabled = true;
+					document.getElementById('som3veld').disabled = true;
+					document.getElementById('som'+this.teVerbergenVeld+'veld').disabled = false;
+					document.getElementById('som'+this.teVerbergenVeld+'veld').focus();
+					if (this.teVerbergenVeld != 1) {
+						document.getElementById('som1veld').value = this.strategie.geefSom1();
+					} else {
+						document.getElementById('som1veld').value = '';
+					}
+					document.getElementById('operator').innerHTML = this.strategie.geefOperator();
+					if (this.teVerbergenVeld != 2) {
+						document.getElementById('som2veld').value = this.strategie.geefSom2();
+					} else {
+						document.getElementById('som2veld').value = '';
+					}
+					if (this.teVerbergenVeld != 3) {
+						document.getElementById('som3veld').value = this.strategie.geefUitkomst();
+					} else {
+						document.getElementById('som3veld').value = '';
+					}			
+				break;
+			case 'klokkijken_naar_digitaal':
+				document.getElementById('som3veld').focus();
+				this.teVerbergenVeld = 3;
+				break;
+			default:
+				alert("Helaas, dit werkt niet.");
+				break;
 		}
-		document.getElementById('operator').innerHTML = this.strategie.geefOperator();
-		if (this.teVerbergenVeld != 2) {
-			document.getElementById('som2veld').value = this.strategie.geefSom2();
-		} else {
-			document.getElementById('som2veld').value = '';
-		}
-		if (this.teVerbergenVeld != 3) {
-			document.getElementById('som3veld').value = this.strategie.geefUitkomst();
-		} else {
-			document.getElementById('som3veld').value = '';
-		}
+
 	},
 	
 	checkVeldInput : function(event) {
 		if (event.keyCode == 13) {
 			this.testAntwoord();
 		} else {
-			var value = document.getElementById('som'+this.teVerbergenVeld+'veld').value;
-			value = value.replace(/[^\d]+/, "");
-			document.getElementById('som'+this.teVerbergenVeld+'veld').value = value;
+			switch(this.strategie.geefInputType()) {
+				case 'numerical':
+					var value = document.getElementById('som'+this.teVerbergenVeld+'veld').value;
+					value = value.replace(/[^\d]+/, "");
+					document.getElementById('som'+this.teVerbergenVeld+'veld').value = value;
+					break;
+				case 'klokkijken_naar_digitaal':
+					var value = document.getElementById('som3veld').value;
+					value = value.replace(/[^\:\d]+/, "");
+					document.getElementById('som3veld').value = value;
+					break;
+			}
 		}
 	},
 	
 	testAntwoord : function() {
-		var gegevenAntwoord = parseInt(document.getElementById('som'+this.teVerbergenVeld+'veld').value, 10);
-		if(!isNaN(gegevenAntwoord)) {
-			var antwoord = null;
-			switch(this.teVerbergenVeld) {
-				case 1:
-					antwoord = this.strategie.geefSom1();
-					break;
-				case 2:
-					antwoord = this.strategie.geefSom2();
-					break;
-				case 3:
-					antwoord = this.strategie.geefUitkomst();
-					break;
-			}
-			if (gegevenAntwoord == antwoord) {
-				if (this.somWasFout) {
-					this.aantalFouteAntwoorden++;
+		var antwoord = null;
+		switch(this.strategie.geefInputType()) {
+			case 'numerical':
+			var gegevenAntwoord = parseInt(document.getElementById('som'+this.teVerbergenVeld+'veld').value, 10);
+			if(!isNaN(gegevenAntwoord)) {
+				switch(this.teVerbergenVeld) {
+					case 1:
+						antwoord = this.strategie.geefSom1();
+						break;
+					case 2:
+						antwoord = this.strategie.geefSom2();
+						break;
+					case 3:
+						antwoord = this.strategie.geefUitkomst();
+						break;
+					}
 				}
-				this.displayText(this.goedzos[Math.floor(Math.random()*this.goedzos.length)], 'messageGood');
-				this.volgendeSom();
-			} else {
-				this.somWasFout = true;
-				this.displayText(this.foutzos[Math.floor(Math.random()*this.foutzos.length)], 'messageBad');
-				document.getElementById('som'+this.teVerbergenVeld+'veld').value = "";
-				document.getElementById('som'+this.teVerbergenVeld+'veld').focus();
+			break;
+		case 'klokkijken_naar_digitaal':
+			antwoord = this.strategie.geefUitkomst();
+			var splitted = document.getElementById('som3veld').value.split(":");
+			var gegevenAntwoord = parseInt(splitted[0], 10)+':'+parseInt(splitted[1], 10);
+			break;	
+		}
+		if (gegevenAntwoord == antwoord) {
+			if (this.somWasFout) {
+				this.aantalFouteAntwoorden++;
 			}
+			this.displayText(this.goedzos[Math.floor(Math.random()*this.goedzos.length)], 'messageGood');
+			document.getElementById('som3veld').value = '';
+			this.volgendeSom();
+		} else {
+			this.somWasFout = true;
+			this.displayText(this.foutzos[Math.floor(Math.random()*this.foutzos.length)], 'messageBad');
+			document.getElementById('som'+this.teVerbergenVeld+'veld').value = "";
+			document.getElementById('som'+this.teVerbergenVeld+'veld').focus();
 		}
 	},
 	
@@ -279,6 +315,10 @@ StrategieUitkomstMax10 = {
 	geefOefening : function() {
 		return 'de optel- en aftreksommen tot en met 10';
 	},
+
+	geefInputType : function() {
+		return 'numerical';
+	},
 	
 	nieuweSom : function() {
 		this.operator = Math.random() > 0.5 ? "-" : "+";
@@ -327,7 +367,11 @@ StrategieUitkomstPrecies10 = {
 	geefOefening : function() {
 		return 'het optellen- en aftrekken tot 10';
 	},
-	
+
+	geefInputType : function() {
+		return 'numerical';
+	},
+		
 	nieuweSom : function() {
 		this.operator = Math.random() > 0.5 ? "-" : "+";
 		this.teVerbergenVeld = Math.random() > 0.5 ? 1 : 2;
@@ -372,6 +416,10 @@ StrategieAftrekkenTotOnderDe10 = {
 	geefOefening : function() {
 		return 'het aftrekken tot onder de 10';
 	},
+
+	geefInputType : function() {
+		return 'numerical';
+	},
 	
 	nieuweSom : function() {
 		this.operator = "-";
@@ -407,6 +455,10 @@ StrategieTafels = {
 
 	geefOefening : function() {
 		return 'alle tafels door elkaar';
+	},
+	
+	geefInputType : function() {
+		return 'numerical';
 	},
 	
 	zetTafel : function(tafelVan) {
@@ -446,6 +498,10 @@ StrategieTafelsWillekeurigeVolgorde = {
 
 	geefOefening : function() {
 		return 'de tafel van '+this.som2;
+	},
+	
+	geefInputType : function() {
+		return 'numerical';
 	},
 	
 	zetTafel : function(tafelVan) {
@@ -503,6 +559,10 @@ StrategieOptellenEnAftrekkenTotEnMet100 = {
 		return 'de optel- en aftreksommen tot en met 100';
 	},
 	
+	geefInputType : function() {
+		return 'numerical';
+	},
+	
 	nieuweSom : function() {
 		this.operator = Math.random() > 0.5 ? "-" : "+";
 		this.teVerbergenVeld = 3;
@@ -544,3 +604,122 @@ StrategieOptellenEnAftrekkenTotEnMet100 = {
 	}
 };
 
+StrategieKlokkijkenNaarDigitaal = {
+	
+	geefOefening : function() {
+		return 'klokkijken en opschrijven in digitaal';
+	},
+	
+	geefInputType : function() {
+		return 'klokkijken_naar_digitaal';
+	},
+	
+	init : function(targetId, uitkomstId) {
+		Clock.init(targetId, uitkomstId);
+	},
+
+	nieuweSom : function() {
+		this.uren = Math.round(Math.random()*24)
+		this.minuten = Math.round(Math.random()*11)*5;
+		Clock.setTime(this.uren, this.minuten);
+	},
+	
+	geefUitkomst : function() {
+		return this.uren+":"+this.minuten;
+	}
+};
+
+
+
+Math.degreesToRadian = function(degrees) { 
+ 	return (degrees * Math.PI) / 180;
+}
+
+Math.radianToDegrees = function(radian) { 
+ 	return (radian * 180) / Math.PI;
+}
+
+Clock = {
+
+	init : function(targetId, uitkomstId) {
+	    var canvas = document.createElement('canvas');
+	    canvas.setAttribute('id', 'paintarea');
+	    canvas.setAttribute('width', 400);
+	    canvas.setAttribute('height', 400);
+	    canvas.style.marginLeft = 170;
+	    uitkomst.style.marginLeft = 330;
+	    targetId.appendChild(canvas);
+	    var divje = document.createElement('div');
+	    divje.setAttribute('id', 'ochtendOfMiddag');
+	    divje.setAttribute('width', 500);
+	    divje.style.textAlign = 'center';
+	    divje.style.marginLeft = -60;
+	    targetId.appendChild(divje);
+		ctx = canvas.getContext("2d");
+	},
+
+	setTime : function(hour, minute) {
+		document.getElementById('ochtendOfMiddag').innerHTML = hour < 6 ? 'nacht' : (hour >= 12 ? (hour >= 18 ? 'avond' : 'middag') : 'ochtend');
+		ctx.strokeStyle = "black";
+		ctx.fillStyle = '#CCE2F8';
+		ctx.lineWidth = 4;
+		ctx.beginPath();
+		ctx.arc(200, 200, 190, 0, 2 * Math.PI, false);
+		ctx.closePath();
+		ctx.fill();
+
+		for (var denominator = 1;denominator < 13;denominator++) {
+			var points = this.calcDenominatorEndPoint(denominator);
+			ctx.moveTo(points.x+200, points.y+200);
+			ctx.beginPath();
+			ctx.arc(points.x+200, points.y+200, 4, 0, 2 * Math.PI, false);
+			ctx.closePath();
+			ctx.fillStyle = '#000000';
+			ctx.fill();
+		}
+		ctx.moveTo(200, 200);
+		var realHour = hour + (minute/60);
+		var points = this.calcHourEndPoint(realHour);
+		ctx.lineTo(points.x+200, points.y+200);
+		ctx.stroke();
+		ctx.closePath();
+		var points = this.calcMinuteEndPoint(minute);
+		ctx.lineTo(points.x+200, points.y+200);
+		ctx.stroke();
+		ctx.closePath();
+	},
+
+	calcHourEndPoint : function(hour) {
+		var degrees = this.hourToRadian(hour);
+		var width = Math.sin(degrees)*110;
+		var height = Math.cos(degrees)*110*-1;
+		return {x:width, y:height};
+	},
+
+	hourToRadian : function(hour) {
+		return ((hour%12)*30 * Math.PI) / 180;
+	},
+
+	calcMinuteEndPoint : function(minute) {
+		var degrees = this.minuteToRadian(minute);
+		var width = Math.sin(degrees)*165;
+		var height = Math.cos(degrees)*165*-1;
+		return {x:width, y:height};
+	},
+
+	minuteToRadian : function(minute) {
+		return ((minute%60)*6 * Math.PI) / 180;
+	},
+
+	calcDenominatorEndPoint : function(minute) {
+		var degrees = this.denominatorToRadian(minute);
+		var width = Math.sin(degrees)*180;
+		var height = Math.cos(degrees)*180*-1;
+		return {x:width, y:height};
+	},
+
+	denominatorToRadian : function(denominator) {
+		return ((denominator)*30 * Math.PI) / 180;
+	}
+
+};
