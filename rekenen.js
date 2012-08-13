@@ -629,16 +629,6 @@ StrategieKlokkijkenNaarDigitaal = {
 	}
 };
 
-
-
-Math.degreesToRadian = function(degrees) { 
- 	return (degrees * Math.PI) / 180;
-}
-
-Math.radianToDegrees = function(radian) { 
- 	return (radian * 180) / Math.PI;
-}
-
 Clock = {
 
 	init : function(targetId, uitkomstId) {
@@ -655,7 +645,7 @@ Clock = {
 	    divje.style.textAlign = 'center';
 	    divje.style.marginLeft = -60;
 	    targetId.appendChild(divje);
-		ctx = canvas.getContext("2d");
+  	    ctx = canvas.getContext("2d");
 	},
 
 	setTime : function(hour, minute) {
@@ -689,37 +679,29 @@ Clock = {
 		ctx.closePath();
 	},
 
+	onMouseDown : function() {
+	    
+	},
+
 	calcHourEndPoint : function(hour) {
-		var degrees = this.hourToRadian(hour);
+		var degrees = ((hour%12)*30 * Math.PI) / 180; 
 		var width = Math.sin(degrees)*110;
 		var height = Math.cos(degrees)*110*-1;
 		return {x:width, y:height};
 	},
 
-	hourToRadian : function(hour) {
-		return ((hour%12)*30 * Math.PI) / 180;
-	},
-
 	calcMinuteEndPoint : function(minute) {
-		var degrees = this.minuteToRadian(minute);
+		var degrees = ((minute%60)*6 * Math.PI) / 180;
 		var width = Math.sin(degrees)*165;
 		var height = Math.cos(degrees)*165*-1;
 		return {x:width, y:height};
 	},
 
-	minuteToRadian : function(minute) {
-		return ((minute%60)*6 * Math.PI) / 180;
-	},
-
-	calcDenominatorEndPoint : function(minute) {
-		var degrees = this.denominatorToRadian(minute);
+	calcDenominatorEndPoint : function(denominator) {
+		var degrees = ((denominator)*30 * Math.PI) / 180; 
 		var width = Math.sin(degrees)*180;
 		var height = Math.cos(degrees)*180*-1;
 		return {x:width, y:height};
 	},
-
-	denominatorToRadian : function(denominator) {
-		return ((denominator)*30 * Math.PI) / 180;
-	}
 
 };
