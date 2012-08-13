@@ -133,6 +133,11 @@ Rekenen = {
 				document.getElementById('numericalInput').style.display = 'none';
 				this.strategie.init(document.getElementById('variableInput'), document.getElementById('uitkomstId'));
 				break;	
+			case 'KlokkijkenNaarAnaloog':
+				this.strategie = StrategieKlokkijkenNaarAnaloog;
+				document.getElementById('numericalInput').style.display = 'none';
+				this.strategie.init(document.getElementById('variableInput'), document.getElementById('uitkomstId'));
+                break;
 			case 'Kies':
 				this.displayText("Je moet nog een oefening kiezen.", 'messageNeutral');
 				return;
@@ -175,7 +180,7 @@ Rekenen = {
 						document.getElementById('som3veld').value = '';
 					}			
 				break;
-			case 'klokkijken_naar_digitaal':
+			case 'klokkijken':
 				document.getElementById('som3veld').focus();
 				this.teVerbergenVeld = 3;
 				break;
@@ -196,7 +201,7 @@ Rekenen = {
 					value = value.replace(/[^\d]+/, "");
 					document.getElementById('som'+this.teVerbergenVeld+'veld').value = value;
 					break;
-				case 'klokkijken_naar_digitaal':
+				case 'klokkijken':
 					var value = document.getElementById('som3veld').value;
 					value = value.replace(/[^\:\d]+/, "");
 					document.getElementById('som3veld').value = value;
@@ -223,12 +228,12 @@ Rekenen = {
 						break;
 					}
 				}
-			break;
-		case 'klokkijken_naar_digitaal':
-			antwoord = this.strategie.geefUitkomst();
-			var splitted = document.getElementById('som3veld').value.split(":");
-			var gegevenAntwoord = parseInt(splitted[0], 10)+':'+parseInt(splitted[1], 10);
-			break;	
+			    break;
+		    case 'klokkijken':
+			    antwoord = this.strategie.geefUitkomst();
+			    var splitted = document.getElementById('som3veld').value.split(":");
+			    var gegevenAntwoord = parseInt(splitted[0], 10)+':'+parseInt(splitted[1], 10);
+			    break;	
 		}
 		if (gegevenAntwoord == antwoord) {
 			if (this.somWasFout) {
@@ -611,11 +616,37 @@ StrategieKlokkijkenNaarDigitaal = {
 	},
 	
 	geefInputType : function() {
-		return 'klokkijken_naar_digitaal';
+		return 'klokkijken';
 	},
 	
 	init : function(targetId, uitkomstId) {
 		Clock.init(targetId, uitkomstId);
+	},
+
+	nieuweSom : function() {
+		this.uren = Math.round(Math.random()*23)
+		this.minuten = Math.round(Math.random()*11)*5;
+		Clock.setTime(this.uren, this.minuten);
+	},
+	
+	geefUitkomst : function() {
+		return this.uren+":"+this.minuten;
+	}
+};
+
+StrategieKlokkijkenNaarAnaloog = {
+	
+	geefOefening : function() {
+		return 'de digitale tijd aanwijzen op de klok';
+	},
+	
+	geefInputType : function() {
+		return 'klokkijken';
+	},
+	
+	init : function(targetId, uitkomstId) {
+		Clock.init(targetId, uitkomstId);
+        Clock.setEditable(true);
 	},
 
 	nieuweSom : function() {
@@ -627,7 +658,7 @@ StrategieKlokkijkenNaarDigitaal = {
 	geefUitkomst : function() {
 		return this.uren+":"+this.minuten;
 	}
-};
+}
 
 Clock = {
 
@@ -637,6 +668,7 @@ Clock = {
 	    canvas.setAttribute('width', 400);
 	    canvas.setAttribute('height', 400);
 	    canvas.style.marginLeft = 170;
+        canvas.onmousemove = Clock.onMouseMove;
 	    uitkomst.style.marginLeft = 330;
 	    targetId.appendChild(canvas);
 	    var divje = document.createElement('div');
@@ -646,7 +678,15 @@ Clock = {
 	    divje.style.marginLeft = -60;
 	    targetId.appendChild(divje);
   	    ctx = canvas.getContext("2d");
+        _editable = false;
+        _hourHand = {'width':12, 'height':0};
+        _minuteHand = {'width':0, 'height':0};
+        _dragging = false;
 	},
+
+    setEditable : function(editable) {
+        _editable = editable;
+    },
 
 	setTime : function(hour, minute) {
 		document.getElementById('ochtendOfMiddag').innerHTML = hour < 6 ? 'nacht' : (hour >= 12 ? (hour >= 18 ? 'avond' : 'middag') : 'ochtend');
@@ -679,9 +719,26 @@ Clock = {
 		ctx.closePath();
 	},
 
-	onMouseDown : function() {
-	    
+	onMouseMove : function(e) {
+	    if(_editable && _dragging) {
+            // calculate hand and update
+//            console.log(e.pageX+' ;'+e.pageY); //.clientX + '; ' event.clientY);
+        }
 	},
+
+    onMouseDown : function(e) {
+        if(_editable) {
+            // decide if cursor is on top of a hand
+            // if true, set hand in _dragging
+        }
+    },
+
+    onMouseUp : function(e) {
+        if(_editable) {
+           // stop dragging
+           // update _hourHand or _minuteHand
+        }
+    },
 
 	calcHourEndPoint : function(hour) {
 		var degrees = ((hour%12)*30 * Math.PI) / 180; 
